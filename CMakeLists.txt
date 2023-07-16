@@ -4,24 +4,28 @@ project(demo VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
-find_package(FoundationDB-Client CONFIG REQUIRED)
-include(CMakePrintHelpers)
-cmake_print_properties(
-     TARGETS
-       fdb_c
-     PROPERTIES
-       LOCATION
-       INTERFACE_COMPILE_OPTIONS
-       INTERFACE_INCLUDE_DIRECTORIES
-       INTERFACE_LINK_LIBRARIES
-)
-# for debug
-message(STATUS "FoundationDB-Client_FOUND: ${FoundationDB-Client_FOUND}")
-message(STATUS "FoundationDB-Client_INCLUDE_DIRS: ${FoundationDB-Client_INCLUDE_DIRS}")
-message(STATUS "FoundationDB-Client_LIBRARIES: ${FoundationDB-Client_LIBRARIES}")
-message(STATUS "FoundationDB-Client_VERSION: ${FoundationDB-Client_VERSION}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+find_package(FDBClient MODULE REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp fdb_c)
+# for debug
+# include(CMakePrintHelpers)
+# cmake_print_properties(
+#      TARGETS
+#        fdb_c
+#      PROPERTIES
+#        LOCATION
+#        INTERFACE_COMPILE_OPTIONS
+#        INTERFACE_INCLUDE_DIRECTORIES
+#        INTERFACE_LINK_LIBRARIES
+# )
+
+add_executable(${PROJECT_NAME} main.cpp)
+target_include_directories(${PROJECT_NAME} 
+  PRIVATE
+    ${FDBClient_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    ${FDBClient_LIBRARIES})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
